@@ -6,7 +6,9 @@ function getRandomNumber(max) {
   return Math.floor(Math.random() * (max + 1));
 }
 
+// each promise will be written basically the same way
 function mowYard(name) {
+  // we return a new promise that resolves in X ms.
   return new Promise((resolve) => {
     setTimeout(() => {
       console.log(`${name} mowed the yard.`);
