@@ -1,16 +1,17 @@
 // I like this better than I do the callbacks.
 // I think I like async/await best.
-const chance = 10;
+const firstName = "James";
+const chance = 40;
+let fellAsleep = false;
 
 function getRandomNumber(max) {
   return Math.floor(Math.random() * (max + 1));
 }
 
 // each promise will be written basically the same way
-function mowYard(name) {
-  // we return a new promise that resolves in {x}ms via setTimeout.
-  // if I were pulling from an API i could return fetch(url) instead
-  // of a new promise because the fetch api returns a promise.
+// the only difference here is we make it async so we can await it later.
+async function mowYard(name) {
+  // we return a new promise that resolves in X ms.
   return new Promise((resolve) => {
     setTimeout(() => {
       console.log(`${name} mowed the yard.`);
@@ -19,9 +20,10 @@ function mowYard(name) {
   });
 }
 
-function weedEat(name) {
+async function weedEat(name) {
   return new Promise((resolve, reject) => {
     if (getRandomNumber(100) < chance) {
+      fellAsleep = true;
       reject(new Error("Fell asleep"));
     } else {
       setTimeout(() => {
@@ -32,9 +34,10 @@ function weedEat(name) {
   });
 }
 
-function trimHedges(name) {
+async function trimHedges(name) {
   return new Promise((resolve, reject) => {
     if (getRandomNumber(100) < chance) {
+      fellAsleep = true;
       reject(new Error("Fell asleep"));
     } else {
       setTimeout(() => {
@@ -45,9 +48,10 @@ function trimHedges(name) {
   });
 }
 
-function collectWood(name) {
+async function collectWood(name) {
   return new Promise((resolve, reject) => {
     if (getRandomNumber(100) < chance) {
+      fellAsleep = true;
       reject(new Error("Fell asleep"));
     } else {
       setTimeout(() => {
@@ -58,9 +62,10 @@ function collectWood(name) {
   });
 }
 
-function waterGarden(name) {
+async function waterGarden(name) {
   return new Promise((resolve, reject) => {
     if (getRandomNumber(100) < chance) {
+      fellAsleep = true;
       reject(new Error("Fell asleep"));
     } else {
       setTimeout(() => {
@@ -71,27 +76,24 @@ function waterGarden(name) {
   });
 }
 
-function finishedChores(name) {
-  console.log(`${name} finished all their chores!`);
-}
-
-function doSummerChores(name) {
+async function doSummerChores(name) {
   console.log(`It's time to start your chores, ${name}.`);
 
-  // This starts the chain.
-  // If the promise resolves successfully, the next is chained.
-  // If any promise rejects, it will break the chain.
-  return mowYard(name)
-    .then(() => weedEat(name)) // process return from mowYard.
-    .then(() => trimHedges(name)) // process return from weedEat.
-    .then(() => collectWood(name)) // process return from trimHedges.
-    .then(() => waterGarden(name)) // process return from collectWood
-    .then(() => finishedChores(name)) // process return from waterGarden.  IF execution makes it this far, all chores are complete.
-    .catch((error) => {
-      // A promise was rejected (they fell asleep).
-      console.log(`${name} fell asleep during their chores.`);
-    });
+  // Unlike promises we don't need to chain with .then(...).
+  // await each async function, if they fall asleep we will
+  // catch and reject/print the sleep message.
+  try {
+    await mowYard(name);
+    await weedEat(name);
+    await trimHedges(name);
+    await collectWood(name);
+    await waterGarden(name);
+  } catch (error) {
+    console.log(`${name} fell asleep during their chores.`);
+  }
 }
 
 // Start the chores
-doSummerChores("James");
+doSummerChores(firstName).then(() => {
+  if (!fellAsleep) console.log(`${firstName} finished all their chores!`);
+});
