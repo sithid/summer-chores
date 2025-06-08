@@ -37,4 +37,5 @@ There is nothing to install. Create a clone/fork of this repo and use node to ex
 
 # Output
 
-![alt text](image.png)
+![callbackVersion.js output](image1.png)
+![promiseVersion.js output](image2.png)
